@@ -1,11 +1,11 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Providers;
+namespace Denmasyarikin\EncryptResponse\Providers;
 
-use Denmasyarikin\EncyptResponse\Contracts\Encryption;
-use Denmasyarikin\EncyptResponse\Contracts\Decryptor;
-use Denmasyarikin\EncyptResponse\Contracts\Encryptor;
-use Denmasyarikin\EncyptResponse\Manager;
+use Denmasyarikin\EncryptResponse\Contracts\Encryption;
+use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
+use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
+use Denmasyarikin\EncryptResponse\Manager;
 use Illuminate\Support\ServiceProvider;
 
 abstract class AbstractServiceProvider extends ServiceProvider

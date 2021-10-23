@@ -1,9 +1,9 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Middleware;
+namespace Denmasyarikin\EncryptResponse\Middleware;
 
 use Closure;
-use Denmasyarikin\EncyptResponse\Contracts\Decryptor;
+use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Illuminate\Http\Request;
 use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -13,7 +13,7 @@ class DecryptRequest extends BaseMiddleware
     /**
      * encryptor
      * 
-     * @var \Denmasyarikin\EncyptResponse\Contracts\Decryptor
+     * @var \Denmasyarikin\EncryptResponse\Contracts\Decryptor
      */
     protected $decryptor;
 

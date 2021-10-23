@@ -1,6 +1,6 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Contracts;
+namespace Denmasyarikin\EncryptResponse\Contracts;
 
 interface Decryptor
 {

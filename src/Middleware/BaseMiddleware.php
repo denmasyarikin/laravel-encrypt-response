@@ -1,6 +1,6 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Middleware;
+namespace Denmasyarikin\EncryptResponse\Middleware;
 
 class BaseMiddleware
 {

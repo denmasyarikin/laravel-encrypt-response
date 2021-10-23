@@ -1,9 +1,9 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Middleware;
+namespace Denmasyarikin\EncryptResponse\Middleware;
 
 use Closure;
-use Denmasyarikin\EncyptResponse\Contracts\Encryptor;
+use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -14,7 +14,7 @@ class EncryptResponse extends BaseMiddleware
     /**
      * encryptor
      * 
-     * @var \Denmasyarikin\EncyptResponse\Contracts\Encryptor
+     * @var \Denmasyarikin\EncryptResponse\Contracts\Encryptor
      */
     protected $encryptor;
 

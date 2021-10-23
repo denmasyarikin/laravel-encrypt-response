@@ -1,9 +1,9 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse;
+namespace Denmasyarikin\EncryptResponse;
 
 use Illuminate\Support\Manager as LaravelManager;
-use Denmasyarikin\EncyptResponse\Drivers\CryptoJsAes;
+use Denmasyarikin\EncryptResponse\Drivers\CryptojsAes;
 
 class Manager extends LaravelManager
 {
@@ -14,7 +14,7 @@ class Manager extends LaravelManager
      */
     public function createCryptojsAesDriver()
     {
-        return new CryptoJsAes();
+        return new CryptojsAes();
     }
 
     /**

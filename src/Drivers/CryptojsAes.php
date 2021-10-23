@@ -1,9 +1,9 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Drivers;
+namespace Denmasyarikin\EncryptResponse\Drivers;
 
-use Denmasyarikin\EncyptResponse\Contracts\Decryptor;
-use Denmasyarikin\EncyptResponse\Contracts\Encryptor;
+use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
+use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
 use Nullix\CryptoJsAes\CryptoJsAes as Nullix;
 
 class CryptojsAes implements Decryptor, Encryptor

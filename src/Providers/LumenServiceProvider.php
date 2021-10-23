@@ -1,9 +1,9 @@
 <?php
 
-namespace Denmasyarikin\EncyptResponse\Providers;
+namespace Denmasyarikin\EncryptResponse\Providers;
 
-use Denmasyarikin\EncyptResponse\Middleware\DecryptRequest;
-use Denmasyarikin\EncyptResponse\Middleware\EncryptResponse;
+use Denmasyarikin\EncryptResponse\Middleware\DecryptRequest;
+use Denmasyarikin\EncryptResponse\Middleware\EncryptResponse;
 
 class LumenServiceProvider extends AbstractServiceProvider
 {

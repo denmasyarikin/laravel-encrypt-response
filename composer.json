@@ -22,13 +22,13 @@
     },
     "autoload": {
         "psr-4": {
-          "Denmasyarikin\\EncyptResponse\\": "src/"
+          "Denmasyarikin\\EncryptResponse\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Denmasyarikin\\EncyptResponse\\Providers\\LaravelServiceProvider"
+                "Denmasyarikin\\EncryptResponse\\Providers\\LaravelServiceProvider"
             ]
         }
     }
