@@ -1,0 +1,29 @@
+{
+    "name": "denmasyarikin/laravel-encrypt-response",
+    "description": "Encrypt response laravel appliction",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Denma Syarikin",
+            "email": "denmasyarikin@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "brainfoolong/cryptojs-aes-php": "^2.1",
+        "illuminate/http": "^8.67"
+    },
+    "autoload": {
+        "psr-4": {
+          "Denmasyarikin\\EncyptResponse\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Denmasyarikin\\EncyptResponse\\Providers\\LaravelServiceProvider"
+            ],
+            "aliases": {}
+        }
+    }
+}
