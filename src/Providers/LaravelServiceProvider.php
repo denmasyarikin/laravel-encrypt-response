@@ -2,6 +2,7 @@
 
 namespace Denmasyarikin\EncyptResponse\Providers;
 
+use Denmasyarikin\EncyptResponse\Middleware\DecryptRequest;
 use Denmasyarikin\EncyptResponse\Middleware\EncryptResponse;
 use Illuminate\Contracts\Http\Kernel;
 
@@ -19,6 +20,10 @@ class LaravelServiceProvider extends AbstractServiceProvider
 
         if ($this->isServiceEnabled()) {
             $kernel->prependMiddleware(EncryptResponse::class);
+        }
+
+        if ($this->isServiceEnabled('request')) {
+            $kernel->prependMiddleware(DecryptRequest::class);
         }
     }
 }

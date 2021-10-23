@@ -3,13 +3,25 @@
 namespace Denmasyarikin\EncyptResponse\Middleware;
 
 use Closure;
+use Denmasyarikin\EncyptResponse\Contracts\Decryptor;
 use Illuminate\Http\Request;
-use Nullix\CryptoJsAes\CryptoJsAes;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class DecryptRequest extends BaseMiddleware
 {
-    const PAYLOAD_KEY = '_payload';
+    /**
+     * encryptor
+     * 
+     * @var \Denmasyarikin\EncyptResponse\Contracts\Decryptor
+     */
+    protected $decryptor;
+
+    public function __construct(Decryptor $decryptor)
+    {
+        $this->decryptor = $decryptor;
+        parent::__construct();
+    }
 
     /**
      * Handle an incoming request.
@@ -21,8 +33,13 @@ class DecryptRequest extends BaseMiddleware
     public function handle(Request $request, Closure $next)
     {
         if ($this->shouldDecrypt($request)) {
-            $payload = $request->input(static::PAYLOAD_KEY);
+            $payload = $request->input($this->config['request_body_key']);
+            if (is_null($payload)) {
+                throw new BadRequestHttpException($this->config['request_body_key'].' is required');
+            }
+
             $data = $this->decrypt($payload);
+
             $request->replace($data);
         }
 
@@ -32,15 +49,15 @@ class DecryptRequest extends BaseMiddleware
     /**
      * let decrypt
      */
-    protected function decrypt($payload)
+    protected function decrypt($plain)
     {
-        $password = env('ENCRYPTION_KEY');
+        $key = $this->config['request_key'];
 
-        if (!$password) {
-            throw new RuntimeException('No password set for encryption');
+        if (!$key) {
+            throw new RuntimeException('No request_key set for decryption');
         }
 
-        return CryptoJsAes::decrypt($payload, $password);
+        return json_decode($this->decryptor->decrypt($plain, $key), true);
     }
 
     /**
@@ -48,17 +65,17 @@ class DecryptRequest extends BaseMiddleware
      */
     protected function shouldDecrypt($request)
     {
-        $hasHeader = $request->header('x-encrypt-response') === 'true';
-        $hasPayload = $request->has(static::PAYLOAD_KEY);
+        $inMethod = in_array($request->method(), ['POST', 'PUT']);
 
-        return $hasHeader && ($hasPayload || $this->hasJsonHeader($request));
-    }
+        if ($inMethod && $this->isServiceEnabled('request')) {
+            $shouldDecrypt = true;
+            if ($this->config['request_optional']) {
+                $shouldDecrypt = $request->header($this->config['request_header_key']) === 'true';
+            }
 
-    /**
-     * check is response has json header
-     */
-    protected function hasJsonHeader(Request $request)
-    {
-        return $request->headers->get('content-type') === 'application/json';
+            return $shouldDecrypt;
+        }
+
+        return false;
     }
 }

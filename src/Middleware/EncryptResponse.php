@@ -3,14 +3,27 @@
 namespace Denmasyarikin\EncyptResponse\Middleware;
 
 use Closure;
+use Denmasyarikin\EncyptResponse\Contracts\Encryptor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Nullix\CryptoJsAes\CryptoJsAes;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class EncryptResponse extends BaseMiddleware
 {
+    /**
+     * encryptor
+     * 
+     * @var \Denmasyarikin\EncyptResponse\Contracts\Encryptor
+     */
+    protected $encryptor;
+
+    public function __construct(Encryptor $encryptor)
+    {
+        $this->encryptor = $encryptor;
+        parent::__construct();
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -41,7 +54,7 @@ class EncryptResponse extends BaseMiddleware
             throw new RuntimeException('No response_key set for encryption');
         }
 
-        return CryptoJsAes::encrypt(json_encode($data), $key);
+        return $this->encryptor->encrypt(json_encode($data), $key);
     }
 
     /**

@@ -2,6 +2,10 @@
 
 namespace Denmasyarikin\EncyptResponse\Providers;
 
+use Denmasyarikin\EncyptResponse\Contracts\Encryption;
+use Denmasyarikin\EncyptResponse\Contracts\Decryptor;
+use Denmasyarikin\EncyptResponse\Contracts\Encryptor;
+use Denmasyarikin\EncyptResponse\Manager;
 use Illuminate\Support\ServiceProvider;
 
 abstract class AbstractServiceProvider extends ServiceProvider
@@ -14,6 +18,36 @@ abstract class AbstractServiceProvider extends ServiceProvider
     public function register()
     {
         $this->configure();
+
+        if ($this->isServiceEnabled()) {
+            $this->createEncryptor();
+        }
+
+        if ($this->isServiceEnabled('request')) {
+            $this->createDecryptor();
+        }
+    }
+
+    /**
+     * create encryptor
+     */
+    protected function createEncryptor()
+    {
+        $this->app->singleton(Encryptor::class, function($app) {
+            $driver = $this->config('response_driver');
+            return (new Manager($app))->driver($driver);
+        });
+    }
+
+    /**
+     * create decryptor
+     */
+    protected function createDecryptor()
+    {
+        $this->app->singleton(Decryptor::class, function($app) {
+            $driver = $this->config('request_driver');
+            return (new Manager($app))->driver($driver);
+        });
     }
 
     /**
@@ -56,5 +90,19 @@ abstract class AbstractServiceProvider extends ServiceProvider
     protected function config($key, $default = null)
     {
         return config("encrypt_response.$key", $default);
+    }
+
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            Encryptor::class,
+            Decryptor::class
+        ];
     }
 }
