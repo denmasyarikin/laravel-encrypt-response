@@ -18,12 +18,13 @@ class LaravelServiceProvider extends AbstractServiceProvider
             $this->publishes([$configPath => config_path('encrypt_response.php')], 'config');
         }
 
-        if ($this->isServiceEnabled()) {
-            $kernel->prependMiddleware(EncryptResponse::class);
+        if ($this->isServiceEnabled('request')) {
+            $kernel->pushMiddleware(DecryptRequest::class);
         }
 
-        if ($this->isServiceEnabled('request')) {
-            $kernel->prependMiddleware(DecryptRequest::class);
+        if ($this->isServiceEnabled()) {
+            $kernel->pushMiddleware(EncryptResponse::class);
         }
+
     }
 }

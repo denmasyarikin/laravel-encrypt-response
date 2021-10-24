@@ -12,12 +12,12 @@ class LumenServiceProvider extends AbstractServiceProvider
      */
     public function boot()
     {
-        if ($this->isServiceEnabled()) {
-            $this->app->middleware(EncryptResponse::class);
-        }
-
         if ($this->isServiceEnabled('request')) {
             $this->app->middleware(DecryptRequest::class);
+        }
+
+        if ($this->isServiceEnabled()) {
+            $this->app->middleware(EncryptResponse::class);
         }
     }
 }
