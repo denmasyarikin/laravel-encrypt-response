@@ -24,7 +24,6 @@ return [
     'request_enabled' => env('DECRYPT_REQUEST_ENABLED', true),
     'request_optional' => env('DECRYPT_REQUEST_OPTIONAL', true),
     'request_header_key' => env('DECRYPT_REQUEST_HEADER_KEY', 'X-DECRYPT-REQUEST'),
-    'request_body_key' => env('DECRYPT_REQUEST_BODY_KEY', '_payload'),
 
     /*
     |--------------------------------------------------------------------------

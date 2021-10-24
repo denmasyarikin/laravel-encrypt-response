@@ -33,12 +33,11 @@ class DecryptRequest extends BaseMiddleware
     public function handle(Request $request, Closure $next)
     {
         if ($this->shouldDecrypt($request)) {
-            $payload = $request->input($this->config['request_body_key']);
-            if (is_null($payload)) {
-                throw new BadRequestHttpException($this->config['request_body_key'].' is required');
+            if (!$this->decryptor->validate($request)) {
+                throw new BadRequestHttpException('Payload data is not encrypted');
             }
 
-            $data = $this->decrypt($payload);
+            $data = $this->decrypt($request->all());
 
             $request->replace($data);
         }
@@ -49,7 +48,7 @@ class DecryptRequest extends BaseMiddleware
     /**
      * let decrypt
      */
-    protected function decrypt($plain)
+    protected function decrypt(array $data)
     {
         $key = $this->config['request_key'];
 
@@ -57,7 +56,7 @@ class DecryptRequest extends BaseMiddleware
             throw new RuntimeException('No request_key set for decryption');
         }
 
-        return json_decode($this->decryptor->decrypt($plain, $key), true);
+        return $this->decryptor->decrypt(json_encode($data), $key);
     }
 
     /**

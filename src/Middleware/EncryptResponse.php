@@ -37,6 +37,7 @@ class EncryptResponse extends BaseMiddleware
 
         if ($this->shouldEncrypt($request, $response)) {
             $data = json_decode($response->getContent(), true);
+
             return new JsonResponse(json_decode($this->encrypt($data), true), $response->getStatusCode());
         }
 
