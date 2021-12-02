@@ -4,13 +4,13 @@ namespace Denmasyarikin\EncryptResponse\Drivers;
 
 use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
-use Nullix\CryptoJsAes\CryptoJsAes as Nullix;
 use Illuminate\Http\Request;
+use Nullix\CryptoJsAes\CryptoJsAes as Nullix;
 
 class CryptojsAes implements Decryptor, Encryptor
 {
     /**
-     * encrypt string
+     * encrypt string.
      */
     public function encrypt(string $data, string $key)
     {
@@ -18,7 +18,7 @@ class CryptojsAes implements Decryptor, Encryptor
     }
 
     /**
-     * decrypt string
+     * decrypt string.
      */
     public function decrypt(string $plain, string $key)
     {
@@ -26,7 +26,7 @@ class CryptojsAes implements Decryptor, Encryptor
     }
 
     /**
-     * validate
+     * validate.
      */
     public function validate(Request $request): bool
     {

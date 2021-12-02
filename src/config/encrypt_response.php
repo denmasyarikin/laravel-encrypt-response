@@ -29,7 +29,7 @@ return [
     |--------------------------------------------------------------------------
     | Encryption and decription driver
     |--------------------------------------------------------------------------
-    | Choice one what driver for use to to encrypt 
+    | Choice one what driver for use to to encrypt
     | - cryptojs-aes
     | - ...
     */

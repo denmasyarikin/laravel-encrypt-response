@@ -2,8 +2,8 @@
 
 namespace Denmasyarikin\EncryptResponse;
 
-use Illuminate\Support\Manager as LaravelManager;
 use Denmasyarikin\EncryptResponse\Drivers\CryptojsAes;
+use Illuminate\Support\Manager as LaravelManager;
 
 class Manager extends LaravelManager
 {

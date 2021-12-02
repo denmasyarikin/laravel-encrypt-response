@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 interface Decryptor
 {
     /**
-     * decrypt string
+     * decrypt string.
      */
     public function decrypt(string $plain, string $password);
 
     /**
-     * validate
+     * validate.
      */
     public function validate(Request $request): bool;
 }

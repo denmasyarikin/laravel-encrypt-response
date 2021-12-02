@@ -4,9 +4,9 @@ namespace Denmasyarikin\EncryptResponse\Middleware;
 
 class BaseMiddleware
 {
-        /**
-     * configuration
-     * 
+    /**
+     * configuration.
+     *
      * @var array
      */
     protected $config = [];
@@ -17,16 +17,16 @@ class BaseMiddleware
     }
 
     /**
-     * check is service enabled
+     * check is service enabled.
      */
     protected function isServiceEnabled(string $type = 'response'): bool
     {
-        if ($type === 'response') {
-            return null !== $this->config['response_key'] && $this->config['response_enabled'] === true;
+        if ('response' === $type) {
+            return null !== $this->config['response_key'] && true === $this->config['response_enabled'];
         }
 
-        if ($type === 'request') {
-            return null !== $this->config['request_key'] && $this->config['request_enabled'] === true;
+        if ('request' === $type) {
+            return null !== $this->config['request_key'] && true === $this->config['request_enabled'];
         }
 
         return false;

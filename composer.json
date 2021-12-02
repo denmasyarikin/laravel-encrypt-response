@@ -1,5 +1,6 @@
 {
     "name": "denmasyarikin/laravel-encrypt-response",
+    "version": "1.0.5",
     "description": "Encrypt response laravel appliction",
     "license": "MIT",
     "keywords": [
@@ -31,5 +32,10 @@
                 "Denmasyarikin\\EncryptResponse\\Providers\\LaravelServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "fix": [
+            "php-cs-fixer fix . --rules=@Symfony"
+        ]
     }
 }

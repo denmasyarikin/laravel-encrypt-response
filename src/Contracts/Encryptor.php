@@ -5,7 +5,7 @@ namespace Denmasyarikin\EncryptResponse\Contracts;
 interface Encryptor
 {
     /**
-     * encrypt string
+     * encrypt string.
      */
     public function encrypt(string $data, string $password);
 }

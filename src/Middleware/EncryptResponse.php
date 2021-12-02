@@ -4,16 +4,16 @@ namespace Denmasyarikin\EncryptResponse\Middleware;
 
 use Closure;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class EncryptResponse extends BaseMiddleware
 {
     /**
-     * encryptor
-     * 
+     * encryptor.
+     *
      * @var \Denmasyarikin\EncryptResponse\Contracts\Encryptor
      */
     protected $encryptor;
@@ -27,8 +27,6 @@ class EncryptResponse extends BaseMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -45,7 +43,7 @@ class EncryptResponse extends BaseMiddleware
     }
 
     /**
-     * let encrypt
+     * let encrypt.
      */
     protected function encrypt(array $data)
     {
@@ -59,14 +57,14 @@ class EncryptResponse extends BaseMiddleware
     }
 
     /**
-     * determine response encryption
+     * determine response encryption.
      */
     protected function shouldEncrypt($request, $response): bool
     {
         if ($this->isServiceEnabled()) {
             $shouldEncrypt = true;
             if ($this->config['response_optional']) {
-                $shouldEncrypt = $request->header($this->config['response_header_key']) === 'true';
+                $shouldEncrypt = 'true' === $request->header($this->config['response_header_key']);
             }
 
             $isJsonResponse = $response instanceof JsonResponse;
@@ -78,10 +76,10 @@ class EncryptResponse extends BaseMiddleware
     }
 
     /**
-     * check is response has json header
+     * check is response has json header.
      */
     protected function hasJsonHeader(Response $response)
     {
-        return $response->headers->get('content-type') === 'application/json';
+        return 'application/json' === $response->headers->get('content-type');
     }
 }

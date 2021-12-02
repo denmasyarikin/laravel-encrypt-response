@@ -25,6 +25,5 @@ class LaravelServiceProvider extends AbstractServiceProvider
         if ($this->isServiceEnabled()) {
             $kernel->pushMiddleware(EncryptResponse::class);
         }
-
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Denmasyarikin\EncryptResponse\Providers;
 
-use Denmasyarikin\EncryptResponse\Contracts\Encryption;
 use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
 use Denmasyarikin\EncryptResponse\Manager;
@@ -29,29 +28,31 @@ abstract class AbstractServiceProvider extends ServiceProvider
     }
 
     /**
-     * create encryptor
+     * create encryptor.
      */
     protected function createEncryptor()
     {
-        $this->app->singleton(Encryptor::class, function($app) {
+        $this->app->singleton(Encryptor::class, function ($app) {
             $driver = $this->config('response_driver');
+
             return (new Manager($app))->driver($driver);
         });
     }
 
     /**
-     * create decryptor
+     * create decryptor.
      */
     protected function createDecryptor()
     {
-        $this->app->singleton(Decryptor::class, function($app) {
+        $this->app->singleton(Decryptor::class, function ($app) {
             $driver = $this->config('request_driver');
+
             return (new Manager($app))->driver($driver);
         });
     }
 
     /**
-     * apply configuration
+     * apply configuration.
      */
     protected function configure()
     {
@@ -64,16 +65,16 @@ abstract class AbstractServiceProvider extends ServiceProvider
     }
 
     /**
-     * check is service enabled
+     * check is service enabled.
      */
     protected function isServiceEnabled(string $type = 'response'): bool
     {
-        if ($type === 'response') {
-            return null !== $this->config('response_key') && $this->config('response_enabled') === true;
+        if ('response' === $type) {
+            return null !== $this->config('response_key') && true === $this->config('response_enabled');
         }
 
-        if ($type === 'request') {
-            return null !== $this->config('request_key') && $this->config('request_enabled') === true;
+        if ('request' === $type) {
+            return null !== $this->config('request_key') && true === $this->config('request_enabled');
         }
 
         return false;
@@ -82,8 +83,8 @@ abstract class AbstractServiceProvider extends ServiceProvider
     /**
      * Helper to get the config values.
      *
-     * @param  string  $key
-     * @param  string  $default
+     * @param string $key
+     * @param string $default
      *
      * @return mixed
      */
@@ -91,7 +92,6 @@ abstract class AbstractServiceProvider extends ServiceProvider
     {
         return config("encrypt_response.$key", $default);
     }
-
 
     /**
      * Get the services provided by the provider.
@@ -102,7 +102,7 @@ abstract class AbstractServiceProvider extends ServiceProvider
     {
         return [
             Encryptor::class,
-            Decryptor::class
+            Decryptor::class,
         ];
     }
 }

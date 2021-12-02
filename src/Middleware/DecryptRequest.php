@@ -11,8 +11,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class DecryptRequest extends BaseMiddleware
 {
     /**
-     * encryptor
-     * 
+     * encryptor.
+     *
      * @var \Denmasyarikin\EncryptResponse\Contracts\Decryptor
      */
     protected $decryptor;
@@ -26,8 +26,6 @@ class DecryptRequest extends BaseMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -46,7 +44,7 @@ class DecryptRequest extends BaseMiddleware
     }
 
     /**
-     * let decrypt
+     * let decrypt.
      */
     protected function decrypt(array $data)
     {
@@ -60,7 +58,7 @@ class DecryptRequest extends BaseMiddleware
     }
 
     /**
-     * determine response encryption
+     * determine response encryption.
      */
     protected function shouldDecrypt($request)
     {
@@ -69,10 +67,10 @@ class DecryptRequest extends BaseMiddleware
         if ($inMethod && $this->isServiceEnabled('request')) {
             $shouldDecrypt = true;
             if ($this->config['request_optional']) {
-                $shouldDecrypt = $request->header($this->config['request_header_key']) === 'true';
+                $shouldDecrypt = 'true' === $request->header($this->config['request_header_key']);
             }
 
-            return $shouldDecrypt;
+            return $shouldDecrypt && count($request->all()) > 0;
         }
 
         return false;
