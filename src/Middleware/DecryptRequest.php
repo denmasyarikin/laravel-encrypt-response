@@ -30,7 +30,7 @@ class DecryptRequest extends BaseMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($this->shouldDecrypt($request)) {
+        if ($this->shouldDecrypt($request) && !$this->inExceptArray($request)) {
             if (!$this->decryptor->validate($request)) {
                 throw new BadRequestHttpException('Payload data is not encrypted');
             }

@@ -10,7 +10,7 @@ return [
 
     'response_key' => env('ENCRYPT_RESPONSE_KEY', env('APP_KEY')),
     'response_enabled' => env('ENCRYPT_RESPONSE_ENABLED', true),
-    'response_optional' => env('ENCRYPT_RESPONSE_ENABLED', false),
+    'response_optional' => env('ENCRYPT_RESPONSE_OPTIONAL', false),
     'response_header_key' => env('ENCRYPT_RESPONSE_HEADER_KEY', 'X-ENCRYPT-RESPONSE'),
 
     /*
@@ -35,4 +35,7 @@ return [
     */
     'response_driver' => env('ENCRYPT_RESPONSE_DRIVER', 'cryptojs-aes'),
     'request_driver' => env('DECRYPT_REQUEST_DRIVER', 'cryptojs-aes'),
+
+    // route exception
+    'route_except' => [],
 ];

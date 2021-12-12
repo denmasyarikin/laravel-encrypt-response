@@ -2,6 +2,8 @@
 
 namespace Denmasyarikin\EncryptResponse\Middleware;
 
+use Illuminate\Http\Request;
+
 class BaseMiddleware
 {
     /**
@@ -27,6 +29,27 @@ class BaseMiddleware
 
         if ('request' === $type) {
             return null !== $this->config['request_key'] && true === $this->config['request_enabled'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if the request has a URI that should be accessible in maintenance mode.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function inExceptArray(Request $request)
+    {
+        foreach ($this->config['route_except'] as $except) {
+            if ($except !== '/') {
+                $except = trim($except, '/');
+            }
+
+            if ($request->fullUrlIs($except) || $request->is($except)) {
+                return true;
+            }
         }
 
         return false;
