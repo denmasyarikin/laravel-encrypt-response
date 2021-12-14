@@ -6,6 +6,7 @@ use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
 use Denmasyarikin\EncryptResponse\Manager;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 abstract class AbstractServiceProvider extends ServiceProvider
 {
@@ -33,7 +34,15 @@ abstract class AbstractServiceProvider extends ServiceProvider
     protected function createEncryptor()
     {
         $this->app->singleton(Encryptor::class, function ($app) {
+            $request = $app->make('request');
             $driver = $this->config('response_driver');
+
+            if ($request->headers->has($this->config('response_header_key'))) {
+                $rDriver = $request->header($this->config('response_header_key'));
+                if ($rDriver !== 'true') {
+                    $driver = $rDriver;
+                }
+            }
 
             return (new Manager($app))->driver($driver);
         });
@@ -45,9 +54,18 @@ abstract class AbstractServiceProvider extends ServiceProvider
     protected function createDecryptor()
     {
         $this->app->singleton(Decryptor::class, function ($app) {
-            $driver = $this->config('request_driver');
+            $request = $app->make('request');
 
-            return (new Manager($app))->driver($driver);
+            if ($request->headers->has($this->config('request_header_key'))) {
+                try {
+                    $driver = $request->header($this->config('request_header_key'));
+                    return (new Manager($app))->driver($driver);
+                } catch (\Exception $e) {
+                    throw new BadRequestHttpException($e->getMessage());
+                }
+            }
+
+            return null;
         });
     }
 

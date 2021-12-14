@@ -12,17 +12,21 @@ class CryptojsAes implements Decryptor, Encryptor
     /**
      * encrypt string.
      */
-    public function encrypt(string $data, string $key)
+    public function encrypt($data, string $key)
     {
-        return Nullix::encrypt($data, $key);
+        $chiper = Nullix::encrypt($data, $key);
+
+        return json_decode($chiper, true);
     }
 
     /**
      * decrypt string.
      */
-    public function decrypt(string $plain, string $key)
+    public function decrypt($chiper, string $key)
     {
-        return Nullix::decrypt($plain, $key);
+        $data = json_encode($chiper);
+
+        return Nullix::decrypt($data, $key);
     }
 
     /**
@@ -30,8 +34,10 @@ class CryptojsAes implements Decryptor, Encryptor
      */
     public function validate(Request $request): bool
     {
-        return $request->has('ct')
+        $hasBody = $request->has('ct')
             && $request->has('iv')
             && $request->has('s');
+
+        return $hasBody;
     }
 }

@@ -17,7 +17,7 @@ class DecryptRequest extends BaseMiddleware
      */
     protected $decryptor;
 
-    public function __construct(Decryptor $decryptor)
+    public function __construct(Decryptor $decryptor = null)
     {
         $this->decryptor = $decryptor;
         parent::__construct();
@@ -35,7 +35,7 @@ class DecryptRequest extends BaseMiddleware
                 throw new BadRequestHttpException('Payload data is not encrypted');
             }
 
-            $data = $this->decrypt($request->all());
+            $data = $this->decrypt($request);
 
             $request->replace($data);
         }
@@ -46,15 +46,17 @@ class DecryptRequest extends BaseMiddleware
     /**
      * let decrypt.
      */
-    protected function decrypt(array $data)
+    protected function decrypt(Request $request)
     {
         $key = $this->config['request_key'];
-
+        
         if (!$key) {
             throw new RuntimeException('No request_key set for decryption');
         }
 
-        return $this->decryptor->decrypt(json_encode($data), $key);
+        $data = $request->all();
+
+        return $this->decryptor->decrypt($data, $key);
     }
 
     /**
@@ -64,15 +66,6 @@ class DecryptRequest extends BaseMiddleware
     {
         $inMethod = in_array($request->method(), ['POST', 'PUT']);
 
-        if ($inMethod && $this->isServiceEnabled('request')) {
-            $shouldDecrypt = true;
-            if ($this->config['request_optional']) {
-                $shouldDecrypt = 'true' === $request->header($this->config['request_header_key']);
-            }
-
-            return $shouldDecrypt && count($request->all()) > 0;
-        }
-
-        return false;
+        return $inMethod && $this->isServiceEnabled('request') && isset($this->decryptor);
     }
 }

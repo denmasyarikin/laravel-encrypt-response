@@ -7,5 +7,5 @@ interface Encryptor
     /**
      * encrypt string.
      */
-    public function encrypt(string $data, string $password);
+    public function encrypt($plain, string $password);
 }

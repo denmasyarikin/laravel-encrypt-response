@@ -39,7 +39,7 @@ class EncryptResponse extends BaseMiddleware
             $headers[$this->config['response_header_key']] = $this->config['response_driver'];
 
             return new JsonResponse(
-                json_decode($this->encrypt($data), true),
+                $this->encrypt($data),
                 $response->getStatusCode(),
                 $headers
             );
@@ -59,7 +59,7 @@ class EncryptResponse extends BaseMiddleware
             throw new RuntimeException('No response_key set for encryption');
         }
 
-        return $this->encryptor->encrypt(json_encode($data), $key);
+        return $this->encryptor->encrypt($data, $key);
     }
 
     /**
@@ -70,7 +70,7 @@ class EncryptResponse extends BaseMiddleware
         if ($this->isServiceEnabled()) {
             $shouldEncrypt = true;
             if ($this->config['response_optional']) {
-                $shouldEncrypt = 'true' === $request->header($this->config['response_header_key']);
+                $shouldEncrypt = $request->headers->has($this->config['response_header_key']);
             }
 
             $isJsonResponse = $response instanceof JsonResponse;
