@@ -35,7 +35,7 @@ class EncryptResponse extends BaseMiddleware
 
         if ($this->shouldEncrypt($request, $response) && !$this->inExceptArray($request)) {
             $data = json_decode($response->getContent(), true);
-            $headers = [];
+            $headers = $response->headers->all();
             $headers[$this->config['response_header_key']] = $this->config['response_driver'];
 
             return new JsonResponse(
