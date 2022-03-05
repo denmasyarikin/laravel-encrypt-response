@@ -64,8 +64,10 @@ class DecryptRequest extends BaseMiddleware
      */
     protected function shouldDecrypt($request)
     {
+        $hasBody = count($request->all()) > 0;
+
         $inMethod = in_array($request->method(), ['POST', 'PUT']);
 
-        return $inMethod && $this->isServiceEnabled('request') && isset($this->decryptor);
+        return $inMethod && $hasBody && $this->isServiceEnabled('request') && isset($this->decryptor);
     }
 }
