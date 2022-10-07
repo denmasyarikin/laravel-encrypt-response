@@ -58,7 +58,7 @@ class EncryptResponse extends BaseMiddleware
     /**
      * let encrypt.
      */
-    protected function encrypt(array $data)
+    protected function encrypt($data)
     {
         $key = $this->config['response_key'];
 
