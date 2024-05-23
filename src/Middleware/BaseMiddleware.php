@@ -37,13 +37,12 @@ class BaseMiddleware
     /**
      * Determine if the request has a URI that should be accessible in maintenance mode.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
     protected function inExceptArray(Request $request)
     {
         foreach ($this->config['route_except'] as $except) {
-            if ($except !== '/') {
+            if ('/' !== $except) {
                 $except = trim($except, '/');
             }
 

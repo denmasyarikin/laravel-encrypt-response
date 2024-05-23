@@ -4,7 +4,6 @@ namespace Denmasyarikin\EncryptResponse\Drivers;
 
 use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
-use Illuminate\Http\Request;
 use Nullix\CryptoJsAes\CryptoJsAes as Nullix;
 
 class CryptojsAes implements Decryptor, Encryptor
@@ -32,12 +31,12 @@ class CryptojsAes implements Decryptor, Encryptor
     /**
      * validate.
      */
-    public function validate(Request $request): bool
+    public function validate(array $data): bool
     {
-        $hasBody = $request->has('ct')
-            && $request->has('iv')
-            && $request->has('s');
+        $hasCt = isset($data['ct']);
+        $hasIv = isset($data['iv']);
+        $hasSalt = isset($data['s']);
 
-        return $hasBody;
+        return $hasCt && $hasIv && $hasSalt;
     }
 }

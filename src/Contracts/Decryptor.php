@@ -2,8 +2,6 @@
 
 namespace Denmasyarikin\EncryptResponse\Contracts;
 
-use Illuminate\Http\Request;
-
 interface Decryptor
 {
     /**
@@ -14,5 +12,5 @@ interface Decryptor
     /**
      * validate.
      */
-    public function validate(Request $request): bool;
+    public function validate(array $data): bool;
 }

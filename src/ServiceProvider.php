@@ -1,14 +1,18 @@
 <?php
 
-namespace Denmasyarikin\EncryptResponse\Providers;
+namespace Denmasyarikin\EncryptResponse;
 
 use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
-use Denmasyarikin\EncryptResponse\Manager;
-use Illuminate\Support\ServiceProvider;
+use Denmasyarikin\EncryptResponse\Middleware\DecryptRequest;
+use Denmasyarikin\EncryptResponse\Middleware\EncryptResponse;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-abstract class AbstractServiceProvider extends ServiceProvider
+class ServiceProvider extends LaravelServiceProvider
 {
     /**
      * Register any application services.
@@ -19,7 +23,7 @@ abstract class AbstractServiceProvider extends ServiceProvider
     {
         $this->configure();
 
-        if ($this->isServiceEnabled()) {
+        if ($this->isServiceEnabled('response')) {
             $this->createEncryptor();
         }
 
@@ -39,7 +43,7 @@ abstract class AbstractServiceProvider extends ServiceProvider
 
             if ($request->headers->has($this->config('response_header_key'))) {
                 $rDriver = $request->header($this->config('response_header_key'));
-                if ($rDriver !== 'true') {
+                if ('true' !== $rDriver) {
                     $driver = $rDriver;
                 }
             }
@@ -59,6 +63,7 @@ abstract class AbstractServiceProvider extends ServiceProvider
             if ($request->headers->has($this->config('request_header_key'))) {
                 try {
                     $driver = $request->header($this->config('request_header_key'));
+
                     return (new Manager($app))->driver($driver);
                 } catch (\Exception $e) {
                     throw new BadRequestHttpException($e->getMessage());
@@ -74,11 +79,8 @@ abstract class AbstractServiceProvider extends ServiceProvider
      */
     protected function configure()
     {
-        if (method_exists($this->app, 'configure')) {
-            $this->app->configure('encrypt_response');
-        }
+        $path = realpath(__DIR__.'/config.php');
 
-        $path = realpath(__DIR__.'/../config/encrypt_response.php');
         $this->mergeConfigFrom($path, 'encrypt_response');
     }
 
@@ -103,24 +105,30 @@ abstract class AbstractServiceProvider extends ServiceProvider
      *
      * @param string $key
      * @param string $default
-     *
-     * @return mixed
      */
     protected function config($key, $default = null)
     {
-        return config("encrypt_response.$key", $default);
+        return config("encrypt_response.{$key}", $default);
     }
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
+     * Bootstrap any package services.
      */
-    public function provides()
+    public function boot(Kernel $kernel): void
     {
-        return [
-            Encryptor::class,
-            Decryptor::class,
-        ];
+        if ($this->app->runningInConsole()) {
+            $configPath = realpath(__DIR__.'/config.php');
+            $this->publishes([$configPath => config_path('encrypt_response.php')], 'config');
+        }
+
+        if ($kernel instanceof HttpKernel) {
+            if ($this->isServiceEnabled('request')) {
+                $kernel->pushMiddleware(DecryptRequest::class);
+            }
+    
+            if ($this->isServiceEnabled()) {
+                $kernel->pushMiddleware(EncryptResponse::class);
+            }
+        }
     }
 }

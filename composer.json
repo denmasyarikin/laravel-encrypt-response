@@ -1,6 +1,6 @@
 {
     "name": "denmasyarikin/laravel-encrypt-response",
-    "version": "2.1.0",
+    "version": "3.0.0",
     "description": "Encrypt response laravel appliction",
     "license": "MIT",
     "keywords": [
@@ -15,12 +15,18 @@
             "email": "denmasyarikin@gmail.com"
         }
     ],
-    "prefer-stable": true,
-    "minimum-stability": "dev",
     "require": {
         "brainfoolong/cryptojs-aes-php": "^2.2",
-        "illuminate/http": "^10.10"
+        "illuminate/http": "^10|^11",
+        "illuminate/contracts": "^10|^11",
+        "illuminate/support": "^10|^11"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3",
+        "laravel/framework": "^10|^11"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
           "Denmasyarikin\\EncryptResponse\\": "src/"
@@ -29,13 +35,11 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Denmasyarikin\\EncryptResponse\\Providers\\LaravelServiceProvider"
+                "Denmasyarikin\\EncryptResponse\\ServiceProvider"
             ]
         }
     },
     "scripts": {
-        "fix": [
-            "php-cs-fixer fix . --rules=@Symfony"
-        ]
+        "fix":  "php-cs-fixer fix . --rules=@Symfony"
     }
 }
