@@ -1,6 +1,6 @@
 {
     "name": "denmasyarikin/laravel-encrypt-response",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Encrypt response laravel appliction",
     "license": "MIT",
     "keywords": [
@@ -16,7 +16,6 @@
         }
     ],
     "require": {
-        "brainfoolong/cryptojs-aes-php": "^2.2",
         "illuminate/http": "^10|^11",
         "illuminate/contracts": "^10|^11",
         "illuminate/support": "^10|^11"

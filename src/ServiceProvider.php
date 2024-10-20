@@ -8,7 +8,6 @@ use Denmasyarikin\EncryptResponse\Middleware\DecryptRequest;
 use Denmasyarikin\EncryptResponse\Middleware\EncryptResponse;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
