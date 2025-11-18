@@ -7,7 +7,7 @@ interface Decryptor
     /**
      * decrypt string.
      */
-    public function decrypt($chiper, string $password);
+    public function decrypt(array $payload, string $passphrase);
 
     /**
      * validate.

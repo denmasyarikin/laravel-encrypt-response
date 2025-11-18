@@ -4,69 +4,107 @@ namespace Denmasyarikin\EncryptResponse\Drivers;
 
 use Denmasyarikin\EncryptResponse\Contracts\Decryptor;
 use Denmasyarikin\EncryptResponse\Contracts\Encryptor;
-use Blocktrail\CryptoJSAES\CryptoJSAES as Blocktrail;
+use JsonException;
 
-class CryptojsAes implements Decryptor, Encryptor
+class CryptojsAes implements Encryptor, Decryptor
 {
     /**
-     * encrypt string.
+     * Derive key and IV from passphrase and salt using CryptoJS-compatible OpenSSL method.
      */
-    public function encrypt($data, string $key)
+    private function deriveKeyAndIv(string $passphrase, string $salt): object
     {
-        $salt = openssl_random_pseudo_bytes(8);
-        $salted = '';
-        $dx = '';
-        while (strlen($salted) < 48) {
-            $dx = md5($dx . $key . $salt, true);
-            $salted .= $dx;
+        $keySize = 32; // 256-bit
+        $ivSize  = 16; // 128-bit
+        $data    = '';
+        $d       = '';
+
+        while (strlen($data) < $keySize + $ivSize) {
+            $d     = hash('md5', $d . $passphrase . $salt, true);
+            $data .= $d;
         }
 
-        $key = substr($salted, 0, 32);
-        $iv = substr($salted, 32, 16);
-        $encrypted_data = openssl_encrypt(json_encode($data), 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
-
-        return [
-            'ct' => base64_encode($encrypted_data),
-            'iv' => bin2hex($iv),
-            's' => bin2hex($salt)
+        return (object) [
+            'key' => substr($data, 0, $keySize),
+            'iv'  => substr($data, $keySize, $ivSize),
         ];
     }
 
     /**
-     * decrypt string.
+     * Encrypt data (compatible with CryptoJS AES + OpenSSL format).
      */
-    public function decrypt($json, string $key)
+    public function encrypt($data, string $passphrase): array
     {
-        $salt = hex2bin($json["s"]);
-        $iv = hex2bin($json["iv"]);
-        $ct = base64_decode($json["ct"]);
-        $concatedPassphrase = $key . $salt;
-        $md5 = [];
-        $md5[0] = md5($concatedPassphrase, true);
-        $result = $md5[0];
-        $i = 1;
+        $salt = random_bytes(8);
 
-        while (strlen($result) < 32) {
-            $md5[$i] = md5($md5[$i - 1] . $concatedPassphrase, true);
-            $result .= $md5[$i];
-            $i++;
+        $derived = $this->deriveKeyAndIv($passphrase, $salt);
+
+        $encrypted = openssl_encrypt(
+            is_string($data) ? $data : json_encode($data),
+            'aes-256-cbc',
+            $derived->key,
+            OPENSSL_RAW_DATA,
+            $derived->iv
+        );
+
+        if ($encrypted === false) {
+            throw new \RuntimeException('Encryption failed');
         }
 
-        $key = substr($result, 0, 32);
-        $data = openssl_decrypt($ct, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
-
-        return json_decode($data, true);
+        return [
+            'ct' => base64_encode($encrypted),
+            'iv' => bin2hex($derived->iv),
+            's'  => bin2hex($salt),
+        ];
     }
 
     /**
-     * validate.
+     * Decrypt data encrypted with CryptoJS OpenSSL format.
+     */
+    public function decrypt(array $payload, string $passphrase)
+    {
+        if (!$this->validate($payload)) {
+            throw new \InvalidArgumentException('Invalid encrypted payload structure');
+        }
+
+        $salt = hex2bin($payload['s']);
+        $iv   = hex2bin($payload['iv']);
+        $ct   = base64_decode($payload['ct'], true);
+
+        if ($salt === false || $iv === false || $ct === false) {
+            throw new \InvalidArgumentException('Invalid hex/base64 data in payload');
+        }
+
+        $derived = $this->deriveKeyAndIv($passphrase, $salt);
+
+        $decrypted = openssl_decrypt(
+            $ct,
+            'aes-256-cbc',
+            $derived->key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        if ($decrypted === false) {
+            throw new \RuntimeException('Decryption failed: invalid key, data corrupted, or wrong passphrase');
+        }
+
+        // Try to decode JSON, fall back to raw string if not valid JSON
+        try {
+            $json = json_decode($decrypted, true, 512, JSON_THROW_ON_ERROR);
+            return $json ?? $decrypted;
+        } catch (JsonException) {
+            return $decrypted;
+        }
+    }
+
+    /**
+     * Validate payload structure.
      */
     public function validate(array $data): bool
     {
-        $hasCt = isset($data['ct']);
-        $hasIv = isset($data['iv']);
-        $hasSalt = isset($data['s']);
-
-        return $hasCt && $hasIv && $hasSalt;
+        return isset($data['ct'], $data['iv'], $data['s'])
+            && is_string($data['ct'])
+            && is_string($data['iv'])
+            && is_string($data['s']);
     }
 }
